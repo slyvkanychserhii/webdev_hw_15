@@ -69,13 +69,13 @@ class Task(models.Model):
 
 class SubTask(models.Model):
     title = models.CharField(
-        verbose_name='task name',
+        verbose_name='subtask name',
         max_length=100)
     description = models.TextField(
-        verbose_name='task description',
+        verbose_name='subtask description',
         blank=True, null=True)
     status = models.IntegerField(
-        verbose_name='task status',
+        verbose_name='subtask status',
         choices=StatusType.choices,
         default=StatusType.NEW)
     deadline = models.DateTimeField(
@@ -86,8 +86,8 @@ class SubTask(models.Model):
         auto_now_add=True)
     task = models.ForeignKey(
         to=Task, on_delete=models.CASCADE,
-        related_name='sub_tasks',
-        related_query_name='sub_task',
+        related_name='subtasks',
+        related_query_name='subtask',
         verbose_name='main task')
 
     def __str__(self):

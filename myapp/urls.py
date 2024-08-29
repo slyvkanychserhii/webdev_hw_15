@@ -6,7 +6,12 @@ from .views import (
     TaskRetrieveUpdateDestroyView,
     TaskStatisticsView,
     SubTaskListCreateView,
-    SubTaskRetrieveUpdateDestroyView)
+    SubTaskRetrieveUpdateDestroyView,
+    SigninView)
+from rest_framework_simplejwt.views import (
+    TokenObtainPairView,
+    TokenRefreshView)
+
 
 router = DefaultRouter()
 router.register(r'categories', CategoryViewSet)
@@ -41,4 +46,12 @@ urlpatterns = [
     # http://127.0.0.1:8000/api/categories/1
     # http://127.0.0.1:8000/api/categories/count_tasks
     path('', include(router.urls)),
+    # http://127.0.0.1:8000/api/token
+    path('token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    # http://127.0.0.1:8000/api/token/refresh
+    path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    # http://127.0.0.1:8000/api/signin
+    path('signin/', SigninView.as_view(), name='signin'),
+    # path('signup/', SignupView.as_view(), name='signup'),
+    # path('signout/', SignoutView.as_view(), name='signout'),
 ]

@@ -24,3 +24,8 @@ if True:
         3
     ]
 }
+
+{
+    "username": "admin",
+    "password": "admin"
+}

@@ -1,3 +1,4 @@
+from datetime import datetime
 from rest_framework import status
 from django.db.models import Count
 from django.utils import timezone
@@ -10,9 +11,12 @@ from rest_framework.generics import (
     ListCreateAPIView,
     RetrieveUpdateDestroyAPIView)
 from rest_framework.pagination import PageNumberPagination
+from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
+from rest_framework_simplejwt.views import TokenObtainPairView
+from rest_framework_simplejwt.tokens import RefreshToken, AccessToken
 from .models import (
     Category,
     SubTask,
@@ -126,3 +130,27 @@ class TaskStatisticsView(APIView):
         data['tasks_lt_now'] = Task.objects.filter(
             deadline__lt=timezone.now()).count()
         return Response(data, status=status.HTTP_200_OK)
+
+
+class SigninView(TokenObtainPairView):
+    permission_classes = [AllowAny]
+
+    def post(self, request, *args, **kwargs):
+        response = super().post(request, *args, **kwargs)
+        access_token = response.data["access"]
+        access = AccessToken(access_token)
+        access_expiry = access['exp']
+        refresh_token = response.data["refresh"]
+        refresh = RefreshToken(refresh_token)
+        refresh_expiry = refresh['exp']
+        response.set_cookie(
+            key='access_token',
+            value=access_token,
+            httponly=True,
+            expires=datetime.fromtimestamp(access_expiry))
+        response.set_cookie(
+            key='refresh_token',
+            value=refresh_token,
+            httponly=True,
+            expires=datetime.fromtimestamp(refresh_expiry))
+        return response

@@ -14,6 +14,8 @@ from pathlib import Path
 import environ
 from django.core.management.utils import get_random_secret_key
 import os
+from datetime import timedelta
+
 
 env = environ.Env(
     SECRET_KEY=(str, get_random_secret_key()),
@@ -50,6 +52,7 @@ INSTALLED_APPS = [
     'myapp.apps.MyappConfig',
     'rest_framework',
     'django_filters',
+    'rest_framework_simplejwt',
 ]
 
 MIDDLEWARE = [
@@ -60,6 +63,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'myapp.middleware.JWTAuthenticationMiddleware',
 ]
 
 ROOT_URLCONF = 'myproject.urls'
@@ -134,5 +138,20 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
-    'PAGE_SIZE': 3
+    'PAGE_SIZE': 3,
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ],
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticatedOrReadOnly',
+    ],
+}
+
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=1),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
+    # 'ROTATE_REFRESH_TOKENS': True,
+    # 'BLACKLIST_AFTER_ROTATION': True,
+    # 'AUTH_COOKIE': 'Authorization',
+    # 'AUTH_HEADER_TYPES': ('Bearer',),
 }
